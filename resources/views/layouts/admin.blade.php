@@ -1,28 +1,39 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - @yield('title', 'Quản Trị')</title>
-    
-    @stack('styles') 
+
+    @stack('styles')
 </head>
+
 <body>
 
     <header id="header">
         <nav>
             <h1>Admin Header</h1>
-            
-            <p>
-                @auth('admin')
-                    Chào mừng, {{ Auth::guard('admin')->user()->name }} | <a href="#">Đăng xuất</a>
-                @elseauth
-                    Chào mừng, {{ Auth::user()->name }} | <a href="#">Đăng xuất</a>
-                @endauth
 
-                @guest('admin')
-                    Khách truy cập | <a href="">Đăng nhập Admin</a>
-                @endguest
+            <p>
+                @auth
+
+                    @if (Auth::user()->role === 'admin')
+                        Chào mừng, Quản trị viên {{ Auth::user()->name }} |
+                    @else
+                        Chào mừng, User {{ Auth::user()->name }} |
+                    @endif
+
+                <form method="POST" action="{{ route('logout') }}" style="display:inline;">
+                    @csrf
+                    <button type="submit">Đăng xuất</button>
+                </form>
+
+            @endauth
+
+            @guest
+                Khách truy cập | <a href="{{ route('login') }}">Đăng nhập</a>
+            @endguest
             </p>
         </nav>
     </header>
@@ -49,7 +60,7 @@
     </footer>
 
     @stack('scripts')
-    
+
     @push('scripts')
         <script>
             console.log('Script chung từ layout admin.');
@@ -57,4 +68,5 @@
     @endpush
 
 </body>
+
 </html>

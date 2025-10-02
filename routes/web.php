@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\LoginController;
 
 /*
 |--------------------------------------------------------------------------
@@ -11,11 +12,21 @@ use App\Http\Controllers\Auth\RegisterController;
 |--------------------------------------------------------------------------
 */
 
+// Trang chủ
+Route::get('/', function () {
+    return view('welcome');
+});
 
 // Form Đăng ký
 Route::get('/register', [RegisterController::class, 'create'])->name('register');
 // Xử lý Đăng ký
 Route::post('/register', [RegisterController::class, 'store']);
+// Form Đăng nhập
+Route::get('/login', [LoginController::class, 'create'])->name('login')->middleware('guest');
+// Xử lý Đăng nhập
+Route::post('/login', [LoginController::class, 'store']);
+// Xử lý Đăng xuất
+Route::post('/logout', [LoginController::class, 'destroy'])->name('logout')->middleware('auth');
 
 // Route group dành cho admin
 Route::middleware(['auth', 'check.role:admin'])
