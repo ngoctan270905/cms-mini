@@ -3,12 +3,19 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Auth\RegisterController;
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
 */
+
+
+// Form Đăng ký
+Route::get('/register', [RegisterController::class, 'create'])->name('register');
+// Xử lý Đăng ký
+Route::post('/register', [RegisterController::class, 'store']);
 
 // Route group dành cho admin
 Route::middleware(['auth', 'check.role:admin'])
