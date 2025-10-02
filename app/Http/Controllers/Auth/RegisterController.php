@@ -42,6 +42,6 @@ class RegisterController extends Controller
         Auth::login($user);
 
         // 4. Chuyển hướng về trang Dashboard
-        return redirect('/dashboard'); 
+        return redirect('/admin/dashboard'); 
     }
 }
