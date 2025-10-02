@@ -44,7 +44,7 @@
             <ul>
                 <li><a href="#">Dashboard</a></li>
                 <li><a href="#">Quản lý Sản phẩm</a></li>
-                <li><a href="#">Quản lý Người dùng</a></li>
+                <li><a href="/admin/posts">Quản lý Posts</a></li>
             </ul>
         </aside>
 
