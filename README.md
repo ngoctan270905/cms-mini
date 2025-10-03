@@ -1,61 +1,72 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 📘 CMS Mini - Laravel Routing & Middleware Architecture
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## 💼 Giới Thiệu Dự Án
+Dự án **CMS Mini** tập trung vào việc xây dựng **module quản lý bài viết (Post) và người dùng** trên nền tảng Laravel.  
+Mục tiêu là áp dụng các chuẩn kiến trúc nâng cao của Laravel như:
+- **Resource Routing**
+- **Custom Middleware**
+- **Form Request Validation**
+- **Route Model Binding**
+- **Blade Template Components**
 
-## About Laravel
+## 🧩 Bối Cảnh & Mục Tiêu
+- Bảo mật khu vực quản trị (`/admin`) chỉ dành cho người dùng có vai trò `admin`.  
+- Áp dụng các **design patterns** tiêu chuẩn của Laravel để đảm bảo **tính mở rộng** và **dễ bảo trì**.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 📚 Kiến Trúc Triển Khai
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 1️⃣ Routing Nâng Cao (Phần 1)
+| Yêu cầu | Chi tiết triển khai |
+|---------|----------------------|
+| **Route Group** | Prefix `/admin`, Middleware `auth` và `check.role:admin`. |
+| **Resource Controller** | `Route::resource('posts', PostController::class)->only(['index', 'create', 'store', 'show']);` |
+| **Named Routes** | `admin.posts.index`, `admin.posts.create`, ... |
+| **Route Model Binding** | `/admin/posts/{post:slug}` (binding theo slug). |
+| **Route Fallback** | `Route::fallback(fn() => response()->view('errors.404', [], 404));` |
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 2️⃣ Blade Template Nâng Cao (Phần 2)
+| Yêu cầu | Chi tiết triển khai |
+|---------|----------------------|
+| **Layout Chung** | `resources/views/layouts/admin.blade.php` sử dụng `@yield('content')`, `@stack('scripts')`. |
+| **Blade Component** | `resources/views/components/alert.blade.php` với `@props(['type' => 'success', 'message'])`. |
+| **Blade Directives** | `@auth`, `@guest`, `@if(Auth::user()->role === 'admin')`. |
+| **Form Handling** | Sử dụng `@csrf` và `@error('field_name')` để hiển thị lỗi. |
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 3️⃣ Controllers, Middleware, Request (Phần 3)
+| Yêu cầu | Chi tiết triển khai |
+|---------|----------------------|
+| **PostController** | Resource Controller: `index`, `create`, `store`, `show`. |
+| **DashboardController** | Single Action Controller: trả về `view('admin.dashboard')`. |
+| **Middleware CheckRole** | Kiểm tra `auth()->check()` && `auth()->user()->role === $role`. |
+| **Form Request** | `StorePostRequest` dùng cho `PostController@store`. |
+| **Validation Rules** | `title` (required, unique, max:255), `content` (min:50). |
 
-## Laravel Sponsors
+---
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## ✅ Testing Guide (Kết Quả Kiểm Thử)
 
-### Premium Partners
+| URL | Middleware yêu cầu | Kết quả mong muốn |
+|-----|--------------------|-------------------|
+| `/login` | guest | Hiển thị form đăng nhập. |
+| `/admin/posts` | auth, check.role:admin | Danh sách bài viết (chỉ admin mới truy cập). |
+| `/admin/posts/create` | auth, check.role:admin | Form tạo bài viết (có layout, CSRF, validation). |
+| `/admin/posts/{slug}` | auth, check.role:admin | Chi tiết bài viết (Route Model Binding theo slug). |
+| `/invalid-path` | - | Hiển thị trang lỗi `404` tùy chỉnh. |
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+---
 
-## Contributing
+## ⚡ Hướng Dẫn Thiết Lập Nhanh
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+1. Đảm bảo cột `role` tồn tại trong bảng `users` với giá trị mặc định là `'user'`.  
+2. Tạo ít nhất một tài khoản trong DB, sau đó cập nhật `role = 'admin'`.  
+3. Đăng ký middleware **CheckRole** trong `app/Http/Kernel.php` (dưới dạng route middleware).  
+   ```php
+   protected $routeMiddleware = [
+       'check.role' => \App\Http\Middleware\CheckRole::class,
+   ];
